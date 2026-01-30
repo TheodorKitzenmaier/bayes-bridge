@@ -12,16 +12,16 @@ worker_namespace = flask_restx.Namespace(
     "Endpoints to start and monitor model workers."
 )
 
-workers: dict[str, ModelWorker]
+workers: dict[str, ModelWorker] = {}
 
 @worker_namespace.route("/init")
 class InitWorker(flask_restx.Resource):
     def post(self):
         # Caller passes in file name for input.
-        data = flask.request.json()
+        data = flask.request.json
         input_file = data.get("input_file", None)
         if not input_file or input_file == "" or input_file[0] != "/":
-            return "Error: Input file must be provided as an absolute path with key \"input_file\".", 400
+            return flask.make_response("Error: Input file must be provided as an absolute path with key \"input_file\".", 400)
 
         # Create a worker.
         worker_id = "".join(random.choice(string.ascii_lowercase) for _ in range(16))
@@ -32,20 +32,20 @@ class InitWorker(flask_restx.Resource):
         workers[worker_id] = worker
 
         # Return a handle for the worker and file names.
-        return f"Worker ID: {worker.id}\nPrior Path: {worker.prior_file}\nOutput Path: {worker.output_file}"
+        return flask.make_response(f"Worker ID: {worker.id}\nPrior Path: {worker.prior_file}\nOutput Path: {worker.output_file}")
 
 @worker_namespace.route("/start")
 class StartWorker(flask_restx.Resource):
     def post(self):
         # Caller passes in worker id and command.
-        data = flask.request.json()
+        data = flask.request.json
         worker_id = data.get("worker_id", None)
         command:str = data.get("command", None)
         if None in [worker_id, command]:
-            return "Error: Must supply \"worker_id\" and \"command\".", 400
+            return flask.make_response("Error: Must supply \"worker_id\" and \"command\".", 400)
         worker = workers.get(worker_id, None)
         if not worker:
-            return f"Error: No worker found with id {worker_id}.", 404
+            return flask.make_response(f"Error: No worker found with id {worker_id}.", 404)
 
         try:
             # Check for files.
@@ -59,13 +59,13 @@ class StartWorker(flask_restx.Resource):
             # Check the worker is not already running.
             assert worker.process is None, f"Worker is already running."
         except AssertionError as e:
-            return f"Error: {str(e)}", 400
+            return flask.make_response(f"Error: {str(e)}", 400)
 
         # Format command.
         command = command.replace("{input_file}", worker.input_file).replace("{prior_file}", worker.prior_file).replace("{output_file}", worker.output_file)
 
         # Run worker.
-        worker.process = subprocess.Popen(command)
+        worker.process = subprocess.Popen(command, shell=True)
 
         return command
 
@@ -75,30 +75,30 @@ class QueryWorker(flask_restx.Resource):
         # Caller passes in worker id.
         worker_id = flask.request.args.get("worker_id", None)
         if not worker_id:
-            return "Error: Must supply \"worker_id\".", 400
+            return flask.make_response("Error: Must supply \"worker_id\".", 400)
         worker = workers.get(worker_id, None)
         if not worker:
-            return f"Error: No worker found with id {worker_id}.", 404
+            return flask.make_response(f"Error: No worker found with id {worker_id}.", 404)
 
         # Return status of worker.
         if not worker.process:
-            return "Ready"
+            return flask.make_response("Ready")
         elif not worker.process.poll():
-            return "Running"
+            return flask.make_response("Running")
         else:
-            return f"Done: {worker.process.returncode}"
+            return flask.make_response(f"Done: {worker.process.returncode}")
 
 @worker_namespace.route("/collect")
 class CollectWorker(flask_restx.Resource):
     def post(self):
         # Caller passes in worker id and command.
-        data = flask.request.json()
+        data = flask.request.json
         worker_id = data.get("worker_id", None)
         if not worker_id:
-            return "Error: Must supply \"worker_id\".", 400
+            return flask.make_response("Error: Must supply \"worker_id\".", 400)
 
         # Remove worker.
         worker = workers.pop(worker_id, None)
         if not worker:
-            return f"Error: No worker found with id {worker_id}.", 404
-        return
+            return flask.make_response(f"Error: No worker found with id {worker_id}.", 404)
+        return flask.make_response("Worker Collected")
