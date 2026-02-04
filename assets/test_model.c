@@ -260,6 +260,15 @@ void model_(int *CurSet,
 	FReadArray(derived_file, *NoOfDerived, Derived);
 	fclose(derived_file);
 
+	// Collect worker.
+	strcpy(request.method_, "POST");
+	strcpy(request.endpoint_, "/bayes_bridge_api/worker/collect");
+	strcpy(request.payload_type_, "application/json");
+	snprintf(request.payload_, sizeof(request.payload_), "{\"worker_id\":%s}", worker_id);
+	if ((code = HttpRequest(&request, &response)) != 200) {
+		printf("Request to collect worker failed with code %d:\n%s\n", code, response.content_);
+	}
+
 	// Clean up.
 	remove(input_filename);
 	remove(param_filename);
