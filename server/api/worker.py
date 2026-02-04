@@ -17,22 +17,22 @@ workers: dict[str, ModelWorker] = {}
 @worker_namespace.route("/init")
 class InitWorker(flask_restx.Resource):
     def post(self):
-        # Caller passes in file name for input.
-        data = flask.request.json
-        input_file = data.get("input_file", None)
-        if not input_file or input_file == "" or input_file[0] != "/":
-            return flask.make_response("Error: Input file must be provided as an absolute path with key \"input_file\".", 400)
-
         # Create a worker.
         worker_id = "".join(random.choice(string.ascii_lowercase) for _ in range(16))
         while worker_id in workers.keys():
             worker_id = "".join(random.choice(string.ascii_lowercase) for _ in range(16))
 
-        worker = ModelWorker(worker_id, input_file, f"{WORKER_FILE_PATH}/{worker_id}.priors", f"{WORKER_FILE_PATH}/{worker_id}.out")
+        # Caller passes in file name for input.
+        data = flask.request.json
+        input_file = data.get("input_file", None)
+        if not input_file or input_file == "" or input_file[0] != "/":
+            input_file = f"{WORKER_FILE_PATH}/{worker_id}.in"
+
+        worker = ModelWorker(worker_id, input_file, f"{WORKER_FILE_PATH}/{worker_id}.priors", f"{WORKER_FILE_PATH}/{worker_id}.out", f"{WORKER_FILE_PATH}/{worker_id}.drv")
         workers[worker_id] = worker
 
         # Return a handle for the worker and file names.
-        return flask.make_response(f"Worker ID: {worker.id}\nPrior Path: {worker.prior_file}\nOutput Path: {worker.output_file}")
+        return flask.make_response(f"Worker_ID: {worker.id}\nInput_Path: {worker.input_file}\nPrior_Path: {worker.prior_file}\nOutput_Path: {worker.output_file}\nDerived_Path: {worker.derived_file}")
 
 @worker_namespace.route("/start")
 class StartWorker(flask_restx.Resource):
