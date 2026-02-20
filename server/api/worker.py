@@ -41,8 +41,6 @@ class StartWorker(flask_restx.Resource):
         data = flask.request.json
         worker_id = data.get("worker_id", None)
         command:str = data.get("command", None)
-        print(flask.request.get_data())
-        print(flask.request.json)
         if None in [worker_id, command]:
             return flask.make_response("Error: Must supply \"worker_id\" and \"command\".", 400)
         worker = workers.get(worker_id, None)
@@ -84,13 +82,10 @@ class QueryWorker(flask_restx.Resource):
 
         # Return status of worker.
         if not worker.process:
-            print("Ready")
             return flask.make_response("Ready")
         elif worker.process.poll() is None:
-            print("Running")
             return flask.make_response("Running")
         else:
-            print("Done")
             return flask.make_response(f"Done: {worker.process.returncode}")
 
 @worker_namespace.route("/collect")
