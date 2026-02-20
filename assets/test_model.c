@@ -210,7 +210,7 @@ void model_(int *CurSet,
 	char param_filename[0x80];
 	char output_filename[0x80];
 	char derived_filename[0x80];
-	sscanf(response.content_, "%*s%s%*s%s%*s%s%*s%s%*s%s", worker_id, input_filename, param_filename, output_filename, derived_filename);
+	sscanf(response.content_, "%s%s%s%s%s", worker_id, input_filename, param_filename, output_filename, derived_filename);
 	FILE* input_file = fopen(input_filename, "w");
 	if (input_file == NULL) {
 		printf("Unable to create file %s for inputs.\n", input_filename);
@@ -228,7 +228,7 @@ void model_(int *CurSet,
 
 	// Start worker.
 	strcpy(request.endpoint_, "/bayes_bridge_api/worker/start");
-	snprintf(request.payload_, sizeof(request.payload_), "{\"worker_id\":%s, \"command\":%s}", worker_id, command);
+	snprintf(request.payload_, sizeof(request.payload_), "{\"worker_id\":\"%s\", \"command\":\"%s\"}", worker_id, command);
 	if ((code = HttpRequest(&request, &response)) != 200) {
 		printf("Request to start worker failed with code %d:\n%s\n", code, response.content_);
 		return;
@@ -264,7 +264,7 @@ void model_(int *CurSet,
 	strcpy(request.method_, "POST");
 	strcpy(request.endpoint_, "/bayes_bridge_api/worker/collect");
 	strcpy(request.payload_type_, "application/json");
-	snprintf(request.payload_, sizeof(request.payload_), "{\"worker_id\":%s}", worker_id);
+	snprintf(request.payload_, sizeof(request.payload_), "{\"worker_id\":\"%s\"}", worker_id);
 	if ((code = HttpRequest(&request, &response)) != 200) {
 		printf("Request to collect worker failed with code %d:\n%s\n", code, response.content_);
 	}

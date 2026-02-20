@@ -32,7 +32,7 @@ class InitWorker(flask_restx.Resource):
         workers[worker_id] = worker
 
         # Return a handle for the worker and file names.
-        return flask.make_response(f"Worker_ID: {worker.id}\nInput_Path: {worker.input_file}\nPrior_Path: {worker.prior_file}\nOutput_Path: {worker.output_file}\nDerived_Path: {worker.derived_file}")
+        return flask.make_response(f"{worker.id}\n{worker.input_file}\n{worker.prior_file}\n{worker.output_file}\n{worker.derived_file}")
 
 @worker_namespace.route("/start")
 class StartWorker(flask_restx.Resource):
