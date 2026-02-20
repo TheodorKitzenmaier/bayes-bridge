@@ -64,7 +64,7 @@ class StartWorker(flask_restx.Resource):
             return flask.make_response(f"Error: {str(e)}", 400)
 
         # Format command.
-        command = command.replace("{input_file}", worker.input_file).replace("{prior_file}", worker.prior_file).replace("{output_file}", worker.output_file)
+        command = command.replace("{input_file}", worker.input_file).replace("{prior_file}", worker.prior_file).replace("{output_file}", worker.output_file).replace("{derived_file}", worker.derived_file)
 
         # Run worker.
         worker.process = subprocess.Popen(command, shell=True)
