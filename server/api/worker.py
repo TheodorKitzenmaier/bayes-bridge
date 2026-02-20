@@ -41,6 +41,8 @@ class StartWorker(flask_restx.Resource):
         data = flask.request.json
         worker_id = data.get("worker_id", None)
         command:str = data.get("command", None)
+        print(flask.request.get_data())
+        print(flask.request.json)
         if None in [worker_id, command]:
             return flask.make_response("Error: Must supply \"worker_id\" and \"command\".", 400)
         worker = workers.get(worker_id, None)
