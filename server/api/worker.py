@@ -86,7 +86,7 @@ class QueryWorker(flask_restx.Resource):
         if not worker.process:
             print("Ready")
             return flask.make_response("Ready")
-        elif not worker.process.poll():
+        elif worker.process.poll() is None:
             print("Running")
             return flask.make_response("Running")
         else:
