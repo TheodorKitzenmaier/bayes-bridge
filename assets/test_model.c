@@ -107,6 +107,21 @@ void ParseHttpResponse(struct HttpResponse* t_response, char* t_buffer) {
 	t_response->content_length_ = 0;
 	t_response->code_ = 0;
 
+	// Strip carriage returns, because those are a thing sometimes for some reason.
+	char* looker = t_buffer;
+	while (*looker) {
+		if (*looker == '\r') {
+			char* mover = looker;
+			while (*mover) {
+				*mover = *(mover + 1);
+				mover++;
+			}
+		}
+		else {
+			looker++;
+		}
+	}
+
 	// Get response code from start line.
 	char* rest = t_buffer;
 	char* start_line = __strtok_r(rest, "\n", &rest);
@@ -114,7 +129,7 @@ void ParseHttpResponse(struct HttpResponse* t_response, char* t_buffer) {
 
 	// Parse headers until empty line (end of metadata).
 	char* header_line;
-	while(!strcmp((header_line = __strtok_r(rest, "\n", &rest)), "")) {
+	while(strcmp((header_line = __strtok_r(rest, "\n", &rest)), "")) {
 		if (strstr(header_line, "Content-Length")) {
 			sscanf(header_line, "%*s%d", &t_response->content_length_);
 		}
