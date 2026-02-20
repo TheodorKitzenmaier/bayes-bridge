@@ -84,10 +84,13 @@ class QueryWorker(flask_restx.Resource):
 
         # Return status of worker.
         if not worker.process:
+            print("Ready")
             return flask.make_response("Ready")
         elif not worker.process.poll():
+            print("Running")
             return flask.make_response("Running")
         else:
+            print("Done")
             return flask.make_response(f"Done: {worker.process.returncode}")
 
 @worker_namespace.route("/collect")

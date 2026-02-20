@@ -137,6 +137,9 @@ void ParseHttpResponse(struct HttpResponse* t_response, char* t_buffer) {
 		if (strstr(header_line, "Content-Type")) {
 			sscanf(header_line, "%*s%s", t_response->content_type_);
 		}
+		if (*rest == '\n') {
+			break;
+		}
 	}
 
 	// Content.
