@@ -34,7 +34,7 @@ else:
 	for _ in range(3): derived_values.append(decay_rate)
 	for _ in range(3): derived_values.append(1.0 / decay_rate)
 
-derived_file.write(" ".join(str(derived_values)))
+derived_file.write(" ".join(str(value) for value in derived_values))
 derived_file.close()
 
 # Output values.
@@ -43,5 +43,5 @@ for value in input_values:
 	output_values.append(math.exp(-decay_rate * value))
 	output_values.append(1.0)
 
-output_file.write(" ".join(str(output_values)))
+output_file.write(" ".join(str(value) for value in output_values))
 output_file.close()
