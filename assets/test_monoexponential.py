@@ -41,6 +41,7 @@ derived_file.close()
 output_values = []
 for value in input_values:
 	output_values.append(math.exp(-decay_rate * value))
+for _ in input_values:
 	output_values.append(1.0)
 
 output_file.write(" ".join(str(value) for value in output_values))
