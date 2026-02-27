@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <sys/fcntl.h>
 #include <string.h>
+#include <time.h>
 
 
 // Hash data into a buffer specified by hash.
@@ -257,9 +258,12 @@ void model_(int *CurSet,
 	snprintf(request.endpoint_, sizeof(request.endpoint_), "/bayes_bridge_api/worker/query?worker_id=%s", worker_id);
 	strcpy(request.payload_type_, "");
 	strcpy(request.payload_, "");
+	struct timespec to_sleep;
+	to_sleep.tv_nsec = 10000000;
+	to_sleep.tv_sec = 0;
 	do {
 		HttpRequest(&request, &response);
-		sleep(2);
+		nanosleep(&to_sleep, NULL);
 	} while (!strstr(response.content_, "Done"));
 
 	// Read derived and signal.
