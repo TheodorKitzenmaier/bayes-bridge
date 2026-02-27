@@ -40,11 +40,16 @@ for value in derived_values:
 derived_file.close()
 
 # Output values.
+error = True
 output_values = []
 for value in input_values:
 	output_values.append(math.exp(-decay_rate * value))
+	if output_values[-1] != 0.0:
+		error = False
 for _ in input_values:
 	output_values.append(1.0)
+if error:
+	output_values[0] = 1.0
 
 for value in output_values:
 	output_file.write(struct.pack("@d", value))
