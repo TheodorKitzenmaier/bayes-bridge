@@ -30,7 +30,7 @@ void FDumpArray(
 		int t_count,
 		double t_data[]) {
 	for (int i = 0; i < t_count; i++) {
-		fprintf(t_file, "%f\n", t_data[i]);
+		fprintf(t_file, "%le\n", t_data[i]);
 	}
 }
 
@@ -43,7 +43,7 @@ int FReadArray(
 		double t_data[]) {
 	int value_count = 0;
 	while (value_count < t_count) {
-		if (fscanf(t_file, "%lf", &t_data[value_count]) == EOF)
+		if (fscanf(t_file, "%le", &t_data[value_count]) == EOF)
 			break;
 		value_count++;
 	}
