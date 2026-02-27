@@ -1,4 +1,5 @@
 import argparse
+import struct
 import math
 
 parser = argparse.ArgumentParser()
@@ -9,18 +10,18 @@ parser.add_argument("-d", "--derived") # derived
 
 args = parser.parse_args()
 
-input_file = open(args.input, "r")
-prior_file = open(args.priors, "r")
-output_file = open(args.output, "w")
-derived_file = open(args.derived, "w")
+input_file = open(args.input, "rb")
+prior_file = open(args.priors, "rb")
+output_file = open(args.output, "wb")
+derived_file = open(args.derived, "wb")
 
 # Read data.
 input_values = []
-for value in input_file.read().split():
-	input_values.append(float(value))
+while raw := input_file.read(8):
+	input_values.append(struct.unpack("=d", raw)[0])
 prior_values = []
-for value in prior_file.read().split():
-	prior_values.append(float(value))
+while raw := prior_file.read(8):
+	prior_values.append(struct.unpack("=d", raw)[0])
 
 input_file.close()
 prior_file.close()
@@ -34,7 +35,8 @@ else:
 	for _ in range(3): derived_values.append(decay_rate)
 	for _ in range(3): derived_values.append(1.0 / decay_rate)
 
-derived_file.write(" ".join(str(value) for value in derived_values))
+for value in derived_values:
+	derived_file.write(struct.pack("@d", value))
 derived_file.close()
 
 # Output values.
@@ -44,5 +46,6 @@ for value in input_values:
 for _ in input_values:
 	output_values.append(1.0)
 
-output_file.write(" ".join(str(value) for value in output_values))
+for value in output_values:
+	output_file.write(struct.pack("@d", value))
 output_file.close()

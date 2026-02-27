@@ -29,9 +29,10 @@ void FDumpArray(
 		FILE* t_file,
 		int t_count,
 		double t_data[]) {
-	for (int i = 0; i < t_count; i++) {
-		fprintf(t_file, "%le\n", t_data[i]);
-	}
+	// for (int i = 0; i < t_count; i++) {
+	// 	fprintf(t_file, "%le\n", t_data[i]);
+	// }
+	fwrite(t_data, sizeof(double), t_count, t_file);
 }
 
 
@@ -41,13 +42,14 @@ int FReadArray(
 		FILE* t_file,
 		int t_count,
 		double t_data[]) {
-	int value_count = 0;
-	while (value_count < t_count) {
-		if (fscanf(t_file, "%le", &t_data[value_count]) == EOF)
-			break;
-		value_count++;
-	}
-	return value_count;
+	// int value_count = 0;
+	// while (value_count < t_count) {
+	// 	if (fscanf(t_file, "%le", &t_data[value_count]) == EOF)
+	// 		break;
+	// 	value_count++;
+	// }
+	// return value_count;
+	return fread(t_data, sizeof(double), t_count, t_file);
 }
 
 
@@ -259,7 +261,7 @@ void model_(int *CurSet,
 	strcpy(request.payload_type_, "");
 	strcpy(request.payload_, "");
 	struct timespec to_sleep;
-	to_sleep.tv_nsec = 1000000;
+	to_sleep.tv_nsec = 10000;
 	to_sleep.tv_sec = 0;
 	do {
 		HttpRequest(&request, &response);
