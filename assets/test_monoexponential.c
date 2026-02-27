@@ -259,7 +259,7 @@ void model_(int *CurSet,
 	strcpy(request.payload_type_, "");
 	strcpy(request.payload_, "");
 	struct timespec to_sleep;
-	to_sleep.tv_nsec = 10000000;
+	to_sleep.tv_nsec = 1000000;
 	to_sleep.tv_sec = 0;
 	do {
 		HttpRequest(&request, &response);
