@@ -43,7 +43,7 @@ uint64_t WorkerMap::AllocateId() {
   uint64_t new_id;
   auto worker = this->workers.find(0);
   do {
-    fscanf(random, "%8c", &new_id);
+    fscanf(random, "%8c", (char*)&new_id);
     worker = this->workers.find(new_id);
   } while (worker != this->workers.end());
   this->workers[new_id] = nullptr;
