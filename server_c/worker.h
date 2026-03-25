@@ -25,6 +25,14 @@ struct Worker {
 
 class WorkerMap {
  public:
+  WorkerMap();
+  WorkerMap(const WorkerMap&) = delete;
+  WorkerMap& operator=(const WorkerMap&) = delete;
+  WorkerMap(WorkerMap&&) = delete;
+  WorkerMap& operator=(WorkerMap&&) = delete;
+
+  ~WorkerMap();
+
   Worker* GetWorker(uint64_t t_id);
   void AddWorker(Worker* t_worker);
   void PopWorker(uint64_t t_id);
