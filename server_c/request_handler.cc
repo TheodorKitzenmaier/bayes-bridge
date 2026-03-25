@@ -2,7 +2,9 @@
 #include <cstring>
 #include <cstdio>
 #include <vector>
+#include <errno.h>
 
+#include "request_handler.h"
 #include "messages.h"
 
 const char* kFilePrefix = "/tmp/";
@@ -71,7 +73,6 @@ void ProcessQuery(QueryData* t_query, WorkerMap* workers) {
   t_query->state = worker->state;
 }
 
-// Write response data back into request buffer (size will always be the same).
 void ProcessRequest(char* t_request, WorkerMap* workers) {
   RequestHeader* header = (RequestHeader*)t_request;
   switch(header->type) {
@@ -99,4 +100,125 @@ void ProcessRequest(char* t_request, WorkerMap* workers) {
     break;
    }
   }
+}
+
+RequestHandler::RequestHandler():
+    exit_on_empty_(false),
+    lock_(),
+    fd_queue_(),
+    thread_(nullptr) {
+}
+
+RequestHandler::~RequestHandler() {
+  if (thread_) {
+    this->Join();
+  }
+}
+
+void RequestHandler::Join() {
+  if (!thread_) {
+    return;
+  }
+  {
+    // Lock only for setting the exit flag...
+    const std::lock_guard<std::mutex> lock(lock_);
+    exit_on_empty_ = true;
+  }
+  // ...otherwise we would get a deadlock here.
+  thread_->join();
+  delete thread_;
+  thread_ = nullptr;
+}
+
+bool RequestHandler::Ready() {
+  const std::lock_guard<std::mutex> lock(lock_);
+  if (exit_on_empty_ || thread_) {
+    return false;
+  }
+  exit_on_empty_ = false;
+  return true;
+}
+
+bool RequestHandler::EnqueueFd(int fd) {
+  const std::lock_guard<std::mutex> lock(lock_);
+  // Don't allow enqueueing new fds if the handler is attempting to stop/stopped.
+  if (exit_on_empty_ || !thread_) {
+    return false;
+  }
+  fd_queue_.push_back(fd);
+  return true;
+}
+
+void RequestHandler::Run(WorkerMap* workers) {
+  if(thread_) {
+    return;
+  }
+  exit_on_empty_ = false;
+  thread_ = new std::thread(&RequestHandler::HandleRequests, this, workers);
+}
+
+void RequestHandler::HandleRequests(WorkerMap* workers) {
+  bool should_stop;
+  char buffer[0x1000];
+  do {
+    int fd_count;
+    {
+      const std::lock_guard<std::mutex> lock(lock_);
+      fd_count = fd_queue_.size();
+      should_stop = exit_on_empty_ && fd_count == 0;
+    }
+
+    // Don't sit around eating cycles if we have nothing to do.
+    if (fd_count == 0) {
+      if (!should_stop) {
+        sched_yield();
+      }
+      continue;
+    }
+
+    int fd;
+    {
+      const std::lock_guard<std::mutex> lock(lock_);
+      fd = fd_queue_.front();
+      fd_queue_.pop_front();
+    }
+
+    int result = recv(
+      fd,
+      buffer,
+      sizeof(RequestHeader),
+      MSG_DONTWAIT | MSG_PEEK | MSG_WAITALL
+    );
+    if (result == -1) {
+      // This is fine, no data or interrupted.
+      if (errno == EAGAIN | EWOULDBLOCK | EINTR) {
+        const std::lock_guard<std::mutex> lock(lock_);
+        fd_queue_.push_back(fd);
+      }
+      // FUBAR, just try to close it and pray.
+      else {
+        close(fd);
+      }
+      continue;
+    }
+    if (result < sizeof(RequestHeader)) {
+      // Disconnect by client.
+      close(fd);
+      continue;
+    }
+
+    RequestHeader* header = (RequestHeader*)buffer;
+    recv(
+      fd,
+      buffer,
+      header->length,
+      MSG_WAITALL 
+    );
+    ProcessRequest(buffer, workers);
+    send(fd, buffer, header->length, 0);
+    {
+      std::lock_guard<std::mutex> lock(lock_);
+      fd_queue_.push_back(fd);
+    }
+  } while(!should_stop);
 }
