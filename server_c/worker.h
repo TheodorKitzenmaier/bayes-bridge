@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <mutex>
 
-enum WorkerState {
+enum WorkerState : uint32_t {
   kReady = 0,
   kRunning,
   kExited
