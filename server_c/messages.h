@@ -26,7 +26,7 @@ struct Init {
 
 struct StartData {
   RequestHeader header;
-  char command[0x100];
+  char command[0x400];
 };
 
 struct QueryData {
