@@ -84,9 +84,9 @@ void model_(
   int fd = Connect("127.0.0.1", 5117);
 
   struct Init init;
+  memset(&init, 0, sizeof(struct Init));
   init.header.length = sizeof(struct Init);
   init.header.type = kInit;
-  memset(&init, 0, sizeof(struct Init));
   memcpy(kMessageBuffer, &init, sizeof(struct Init));
   MakeRequest(fd);
   memcpy(&init, kMessageBuffer, sizeof(struct Init));
