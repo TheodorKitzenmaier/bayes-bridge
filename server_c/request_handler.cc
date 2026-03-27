@@ -77,30 +77,34 @@ void ProcessRequest(char* t_request, WorkerMap* workers) {
   RequestHeader* header = (RequestHeader*)t_request;
   switch(header->type) {
    case MessageType::kInit: {
-    ProcessInit((Init*)t_request, workers);
     printf("I\n");
+    ProcessInit((Init*)t_request, workers);
+    printf("If\n");
     break;
    }
 
    case MessageType::kStart: {
-    ProcessStart((StartData*)t_request, workers);
     printf("S\n");
+    ProcessStart((StartData*)t_request, workers);
+    printf("Sf\n");
     break;
    }
 
    case MessageType::kQuery:{
-    ProcessQuery((QueryData*)t_request, workers);
     printf("Q\n");
+    ProcessQuery((QueryData*)t_request, workers);
+    printf("Qf\n");
     break;
    }
 
    case MessageType::kCollect: {
+    printf("C\n");
     Worker* worker = workers->GetWorker(header->worker_id);
     if (worker->pid and worker->state == WorkerState::kRunning) {
       waitpid(worker->pid, nullptr, 0);
     }
     workers->PopWorker(worker->pid);
-    printf("C\n");
+    printf("Cf\n");
     break;
    }
   }

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 char kMessageBuffer[0x1000];
 
@@ -148,6 +149,7 @@ void model_(
   collect->length = sizeof(struct RequestHeader);
   collect->type = kCollect;
   MakeRequest(fd);
+  close(fd);
 
   return;
 }
