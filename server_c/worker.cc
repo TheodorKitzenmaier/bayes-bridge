@@ -47,5 +47,6 @@ uint64_t WorkerMap::AllocateId() {
     worker = this->workers.find(new_id);
   } while (worker != this->workers.end());
   this->workers[new_id] = nullptr;
+  fclose(random);
   return new_id;
 }
