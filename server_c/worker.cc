@@ -39,6 +39,8 @@ void WorkerMap::PopWorker(uint64_t t_id) {
 
 uint64_t WorkerMap::AllocateId() {
   printf("L\n");
+  printf("%p\n", this);
+  printf("%p\n", &this->worker_mutex);
   const std::lock_guard<std::mutex> lock(this->worker_mutex);
   printf("Opening Random\n");
   FILE* random = fopen("/dev/urandom", "r");

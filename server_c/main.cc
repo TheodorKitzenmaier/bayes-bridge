@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
   int port = 5117;
   int thread_count = 10;
 
-  workers;
+  workers = new WorkerMap();
   handlers = new std::list<RequestHandler*>();
 
   printf("Initializing thread handlers.\n");

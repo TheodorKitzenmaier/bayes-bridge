@@ -47,7 +47,7 @@ struct QueryData {
 
 int Connect(char* addr, int port) {
   uint8_t addr_ints[4];
-  sscanf(addr, "%hhu.%hhu.%hhu.%hhu", &addr_ints[0], &addr_ints[1], &addr_ints[2], &addr_ints[3]);
+  sscanf(addr, "%hhu.%hhu.%hhu.%hhu", &addr_ints[3], &addr_ints[2], &addr_ints[1], &addr_ints[0]);
   struct sockaddr_in server_addr;
   server_addr.sin_addr.s_addr = htonl(*(uint32_t*)addr_ints);
   server_addr.sin_port = htons(port);
