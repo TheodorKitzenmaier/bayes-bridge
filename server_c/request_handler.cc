@@ -63,6 +63,10 @@ void ProcessStart(StartData* t_start, WorkerMap* workers) {
   tokens.push_back(nullptr);
 
   pid_t pid = fork();
+  if (pid == -1) {
+    printf("FORK FAILED\n");
+    _exit(-1);
+  }
   if (!pid) {
     chdir(kWorkerDir);
     execve(tokens[0], tokens.data(), {nullptr});
