@@ -66,6 +66,7 @@ void ProcessStart(StartData* t_start, WorkerMap* workers) {
   if (!pid) {
     chdir(kWorkerDir);
     execve(tokens[0], tokens.data(), {nullptr});
+    printf("EXECVE FUBAR\n");
   }
   worker->pid = pid;
   worker->state = WorkerState::kRunning;
@@ -89,34 +90,30 @@ void ProcessRequest(char* t_request, WorkerMap* workers) {
   RequestHeader* header = (RequestHeader*)t_request;
   switch(header->type) {
    case MessageType::kInit: {
-    printf("I\n");
+    printf("INIT\n");
     ProcessInit((Init*)t_request, workers);
-    printf("If\n");
     break;
    }
 
    case MessageType::kStart: {
-    printf("S\n");
+    printf("START %lu\n", header->worker_id);
     ProcessStart((StartData*)t_request, workers);
-    printf("Sf\n");
     break;
    }
 
    case MessageType::kQuery:{
-    printf("Q\n");
+    printf("QUERY %lu\n", header->worker_id);
     ProcessQuery((QueryData*)t_request, workers);
-    printf("Qf\n");
     break;
    }
 
    case MessageType::kCollect: {
-    printf("C\n");
+    printf("COLLECT %lu\n", header->worker_id);
     Worker* worker = workers->GetWorker(header->worker_id);
     if (worker->pid and worker->state == WorkerState::kRunning) {
       waitpid(worker->pid, nullptr, 0);
     }
     workers->PopWorker(worker->pid);
-    printf("Cf\n");
     break;
    }
   }
