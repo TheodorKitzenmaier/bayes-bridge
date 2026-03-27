@@ -113,7 +113,7 @@ void ProcessRequest(char* t_request, WorkerMap* workers) {
    }
 
    case MessageType::kQuery:{
-    printf("QUERY %lu\n", header->worker_id);
+    //printf("QUERY %lu\n", header->worker_id);
     ProcessQuery((QueryData*)t_request, workers);
     break;
    }
