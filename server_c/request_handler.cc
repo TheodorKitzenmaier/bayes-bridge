@@ -84,7 +84,7 @@ void ProcessQuery(QueryData* t_query, WorkerMap* workers) {
     return;
   }
   int status;
-  pid_t result = waitpid(worker->id, &status, WNOHANG);
+  pid_t result = waitpid(worker->pid, &status, WNOHANG);
   if (result >= 0 && WIFEXITED(status)) {
     worker->state = WorkerState::kExited;
   }
