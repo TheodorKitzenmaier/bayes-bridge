@@ -11,32 +11,25 @@ const char* kFilePrefix = "/tmp/";
 const char* kWorkerDir = "/tmp/";
 
 void ProcessInit(Init* t_init, WorkerMap* workers) {
-  printf("I_Gid\n");
   t_init->header.worker_id = workers->AllocateId();
 
-  printf("I_Gw\n");
   Worker* worker = new Worker;
   std::memset(worker, 0, sizeof(Worker));
   worker->id = t_init->header.worker_id;
   worker->state = WorkerState::kReady;
-  printf("I_Gaw\n");
   workers->AddWorker(worker);
 
   // Generate file names only if they were not supplied.
   if (!std::strcmp(t_init->input_file, "")) {
-    printf("I_Gin\n");
     std::snprintf(t_init->input_file, sizeof(t_init->input_file), "%s%lu.in", kFilePrefix, worker->id);
   }
   if (!std::strcmp(t_init->prior_file, "")) {
-    printf("I_Gpr\n");
     std::snprintf(t_init->prior_file, sizeof(t_init->prior_file), "%s%lu.pr", kFilePrefix, worker->id);
   }
   if (!std::strcmp(t_init->output_file, "")) {
-    printf("I_Gout\n");
     std::snprintf(t_init->output_file, sizeof(t_init->output_file), "%s%lu.out", kFilePrefix, worker->id);
   }
   if (!std::strcmp(t_init->derived_file, "")) {
-    printf("I_Gdrv\n");
     std::snprintf(t_init->derived_file, sizeof(t_init->derived_file), "%s%lu.drv", kFilePrefix, worker->id);
   }
 
@@ -57,6 +50,7 @@ void ProcessStart(StartData* t_start, WorkerMap* workers) {
   strcpy(worker->command, t_start->command);
 
   // Unlike the flask server, rely on the client to substitute files for io.
+  printf("EXECVE %s\n", command);
   while (token = strtok_r(rest, " ", &rest)) {
     tokens.push_back(token);
   }
