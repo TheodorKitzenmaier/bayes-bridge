@@ -78,16 +78,19 @@ void ProcessRequest(char* t_request, WorkerMap* workers) {
   switch(header->type) {
    case MessageType::kInit: {
     ProcessInit((Init*)t_request, workers);
+    printf("I\n");
     break;
    }
 
    case MessageType::kStart: {
     ProcessStart((StartData*)t_request, workers);
+    printf("S\n");
     break;
    }
 
    case MessageType::kQuery:{
     ProcessQuery((QueryData*)t_request, workers);
+    printf("Q\n");
     break;
    }
 
@@ -97,6 +100,7 @@ void ProcessRequest(char* t_request, WorkerMap* workers) {
       waitpid(worker->pid, nullptr, 0);
     }
     workers->PopWorker(worker->pid);
+    printf("C\n");
     break;
    }
   }
@@ -203,6 +207,7 @@ void RequestHandler::HandleRequests(WorkerMap* workers) {
     }
     if (result < sizeof(RequestHeader)) {
       // Disconnect by client.
+      printf("D\n");
       close(fd);
       continue;
     }
