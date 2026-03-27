@@ -66,7 +66,8 @@ void ProcessStart(StartData* t_start, WorkerMap* workers) {
   if (!pid) {
     chdir(kWorkerDir);
     execve(tokens[0], tokens.data(), {nullptr});
-    printf("EXECVE FUBAR\n");
+    printf("EXECVE FUBAR\n%d\b", errno);
+    _exit(-1);
   }
   worker->pid = pid;
   worker->state = WorkerState::kRunning;
