@@ -11,12 +11,16 @@ const char* kFilePrefix = "/tmp/";
 const char* kWorkerDir = "/tmp/";
 
 void ProcessInit(Init* t_init, WorkerMap* workers) {
+  printf("I_Gid\n");
   t_init->header.worker_id = workers->AllocateId();
 
+  printf("I_Gw\n");
   Worker* worker = new Worker;
   std::memset(worker, 0, sizeof(Worker));
   worker->id = t_init->header.worker_id;
   worker->state = WorkerState::kReady;
+  printf("I_Gaw\n");
+  workers->AddWorker(worker);
 
   // Generate file names only if they were not supplied.
   if (!std::strcmp(t_init->input_file, "")) {
