@@ -6,8 +6,6 @@
 #include <time.h>
 #include <unistd.h>
 
-char kMessageBuffer[0x1000];
-
 enum MessageType : uint32_t {
   kInit = 0,
   kStart,
@@ -58,10 +56,10 @@ int Connect(char* addr, int port) {
   return fd;
 }
 
-void MakeRequest(int fd) {
-  struct RequestHeader* header = (struct RequestHeader*)kMessageBuffer;
-  send(fd, kMessageBuffer, header->length, 0);
-  recv(fd, kMessageBuffer, header->length, MSG_WAITALL);
+void MakeRequest(int fd, char* t_buffer) {
+  struct RequestHeader* header = (struct RequestHeader*)t_buffer;
+  send(fd, t_buffer, header->length, 0);
+  recv(fd, t_buffer, header->length, MSG_WAITALL);
 }
 
 void model_(
@@ -84,12 +82,13 @@ void model_(
   int fd = Connect("127.0.0.1", 5117);
 
   struct Init init;
+  char buffer[0x1000];
   memset(&init, 0, sizeof(struct Init));
   init.header.length = sizeof(struct Init);
   init.header.type = kInit;
-  memcpy(kMessageBuffer, &init, sizeof(struct Init));
-  MakeRequest(fd);
-  memcpy(&init, kMessageBuffer, sizeof(struct Init));
+  memcpy(buffer, &init, sizeof(struct Init));
+  MakeRequest(fd, buffer);
+  memcpy(&init, buffer, sizeof(struct Init));
 
   FILE* input_file = fopen(init.input_file, "w");
   if (!input_file) {
@@ -104,7 +103,7 @@ void model_(
   fwrite(t_priors, sizeof(double), *t_num_priors, prior_file);
   fclose(prior_file);
 
-  struct StartData* start = (struct StartData*)kMessageBuffer;
+  struct StartData* start = (struct StartData*)buffer;
   start->header.length = sizeof(struct StartData);
   start->header.type = kStart;
   snprintf(
@@ -116,16 +115,16 @@ void model_(
     init.prior_file,
     init.output_file,
     init.derived_file);
-  MakeRequest(fd);
+  MakeRequest(fd, buffer);
 
-  struct QueryData* query = (struct QueryData*)kMessageBuffer;
+  struct QueryData* query = (struct QueryData*)buffer;
   query->header.length = sizeof(struct QueryData);
   query->header.type = kQuery;
   struct timespec to_sleep;
   to_sleep.tv_nsec = 10000;
   to_sleep.tv_sec = 0;
   do {
-    MakeRequest(fd);
+    MakeRequest(fd, buffer);
     nanosleep(&to_sleep, NULL);
   } while(query->state != kExited);
 
@@ -146,10 +145,10 @@ void model_(
   remove(init.output_file);
   remove(init.derived_file);
 
-  struct RequestHeader* collect = (struct RequestHeader*)kMessageBuffer;
+  struct RequestHeader* collect = (struct RequestHeader*)buffer;
   collect->length = sizeof(struct RequestHeader);
   collect->type = kCollect;
-  MakeRequest(fd);
+  MakeRequest(fd, buffer);
   close(fd);
 
   return;
