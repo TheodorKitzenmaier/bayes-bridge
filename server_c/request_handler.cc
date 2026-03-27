@@ -97,6 +97,7 @@ void ProcessRequest(char* t_request, WorkerMap* workers) {
    case MessageType::kInit: {
     printf("INIT\n");
     ProcessInit((Init*)t_request, workers);
+    printf("-> %lu", header->worker_id);
     break;
    }
 
