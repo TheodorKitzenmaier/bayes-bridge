@@ -19,14 +19,22 @@ void ProcessInit(Init* t_init, WorkerMap* workers) {
   worker->state = WorkerState::kReady;
 
   // Generate file names only if they were not supplied.
-  if (!std::strcmp(t_init->input_file, ""))
+  if (!std::strcmp(t_init->input_file, "")) {
+    printf("I_Gin\n");
     std::snprintf(t_init->input_file, sizeof(t_init->input_file), "%s%lu.in", kFilePrefix, worker->id);
-  if (!std::strcmp(t_init->prior_file, ""))
+  }
+  if (!std::strcmp(t_init->prior_file, "")) {
+    printf("I_Gpr\n");
     std::snprintf(t_init->prior_file, sizeof(t_init->prior_file), "%s%lu.pr", kFilePrefix, worker->id);
-  if (!std::strcmp(t_init->output_file, ""))
+  }
+  if (!std::strcmp(t_init->output_file, "")) {
+    printf("I_Gout\n");
     std::snprintf(t_init->output_file, sizeof(t_init->output_file), "%s%lu.out", kFilePrefix, worker->id);
-  if (!std::strcmp(t_init->derived_file, ""))
+  }
+  if (!std::strcmp(t_init->derived_file, "")) {
+    printf("I_Gdrv\n");
     std::snprintf(t_init->derived_file, sizeof(t_init->derived_file), "%s%lu.drv", kFilePrefix, worker->id);
+  }
 
   std::strcpy(worker->input_file, t_init->input_file);
   std::strcpy(worker->prior_file, t_init->prior_file);
