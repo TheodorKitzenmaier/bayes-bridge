@@ -50,7 +50,7 @@ void ProcessStart(StartData* t_start, WorkerMap* workers) {
   strcpy(worker->command, t_start->command);
 
   // Unlike the flask server, rely on the client to substitute files for io.
-  printf("EXECVE %s\n", command);
+  // printf("EXECVE %s\n", command);
   while (token = strtok_r(rest, " ", &rest)) {
     tokens.push_back(token);
   }
@@ -95,14 +95,14 @@ void ProcessRequest(char* t_request, WorkerMap* workers) {
   RequestHeader* header = (RequestHeader*)t_request;
   switch(header->type) {
    case MessageType::kInit: {
-    printf("INIT\n");
+    //printf("INIT\n");
     ProcessInit((Init*)t_request, workers);
-    printf("-> %lu\n", header->worker_id);
+    //printf("-> %lu\n", header->worker_id);
     break;
    }
 
    case MessageType::kStart: {
-    printf("START %lu\n", header->worker_id);
+    //printf("START %lu\n", header->worker_id);
     ProcessStart((StartData*)t_request, workers);
     break;
    }
@@ -114,7 +114,7 @@ void ProcessRequest(char* t_request, WorkerMap* workers) {
    }
 
    case MessageType::kCollect: {
-    printf("COLLECT %lu\n", header->worker_id);
+    //printf("COLLECT %lu\n", header->worker_id);
     Worker* worker = workers->GetWorker(header->worker_id);
     if (worker->pid and worker->state == WorkerState::kRunning) {
       waitpid(worker->pid, nullptr, 0);
@@ -183,7 +183,7 @@ void RequestHandler::Run(WorkerMap* workers) {
 void RequestHandler::HandleRequests(WorkerMap* workers) {
   bool should_stop;
   char buffer[0x1000];
-  printf("%d -> %p\n", std::this_thread::get_id(), buffer);
+  //printf("%d -> %p\n", std::this_thread::get_id(), buffer);
   do {
     int fd_count;
     {
@@ -227,7 +227,7 @@ void RequestHandler::HandleRequests(WorkerMap* workers) {
     }
     if (result < sizeof(RequestHeader)) {
       // Disconnect by client.
-      printf("D\n");
+      //printf("D\n");
       close(fd);
       continue;
     }

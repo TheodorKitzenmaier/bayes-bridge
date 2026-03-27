@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
   std::list<RequestHandler*>::iterator current_handler = handlers->begin();
   while(true) {
     int fd = accept(soc, (sockaddr*)&client_addr, &client_addr_size);
-    printf("ACCEPT\n");
+    //printf("ACCEPT\n");
     (*current_handler)->EnqueueFd(fd);
     current_handler++;
     if (current_handler == handlers->end()) {
