@@ -182,6 +182,7 @@ void RequestHandler::Run(WorkerMap* workers) {
 void RequestHandler::HandleRequests(WorkerMap* workers) {
   bool should_stop;
   char buffer[0x1000];
+  printf("%d -> %p\n", std::this_thread::get_id(), buffer);
   do {
     int fd_count;
     {
