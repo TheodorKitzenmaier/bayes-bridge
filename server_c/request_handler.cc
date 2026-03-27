@@ -70,7 +70,7 @@ void ProcessStart(StartData* t_start, WorkerMap* workers) {
   if (!pid) {
     chdir(kWorkerDir);
     execve(tokens[0], tokens.data(), {nullptr});
-    printf("EXECVE FUBAR\n%d\b", errno);
+    printf("EXECVE FUBAR\n%d\n", errno);
     for (auto token : tokens) {
       if (token)
         printf("%s\n", token);
