@@ -94,7 +94,7 @@ void model_(
   if (!input_file) {
     return;
   }
-  fwrite(t_abscissa, sizeof(double), *t_num_abscissa * *t_total_values, input_file);
+  fwrite(t_abscissa, sizeof(double), *t_num_abscissa * *t_max_num_value, input_file);
   fclose(input_file);
   FILE* prior_file = fopen(init.prior_file, "w");
   if (!prior_file) {
@@ -130,7 +130,7 @@ void model_(
 
   FILE* output_file = fopen(init.output_file, "r");
   if (output_file) {
-    fread(t_signal, sizeof(double), *t_total_values, output_file);
+    fread(t_signal, sizeof(double), *t_num_values * *t_max_num_value * *t_num_vectors, output_file);
     fclose(output_file);
   }
   FILE* derived_file = fopen(init.derived_file, "r");
