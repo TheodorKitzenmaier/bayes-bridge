@@ -93,10 +93,10 @@ void model_(
     fclose(derived_file);
   }
 
-  remove(input_filename);
   remove(prior_filename);
   remove(output_filename);
   remove(derived_filename);
+  remove(input_filename);
 
   return;
 }
