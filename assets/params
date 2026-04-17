@@ -15,6 +15,23 @@ DecayTimeHigh
 DecayTimeMiddle
 DecayTimeLow
 
+### MONO MARG
+
+  1  Number of Abscissa
+  2  Number of model vectors
+  1  Number of data cols
+  3  Number of Priors
+DecayRate1      0.0000E+00  1.0000E+00  1.0000E+01  1.0000E+00 Positive(e)     NotOrdered(ne) NonLinear      
+Amplitude      -1.0000E+06  0.0000E+00  1.0000E+06  3.0000E+05 Gaussian(ne)    NotOrdered(ne) Amplitude      
+Constant       -1.0000E+06  0.0000E+00  1.0000E+06  3.0000E+05 Gaussian(ne)    NotOrdered(ne) Amplitude      
+  6  Number of Derived parameters
+DecayRateLow
+DecayRateMiddle
+DecayRateHigh
+DecayTimeHigh
+DecayTimeMiddle
+DecayTimeLow
+
 ### BI
 
   1  Number of Abscissa
@@ -26,6 +43,25 @@ DecayRate2      0.0000E+00  1.0000E+00  1.0000E+01  1.0000E+00 Positive(e)     L
 Amplitude1     -1.0000E+03  0.0000E+00  1.0000E+03  3.0000E+02 Gaussian(e)     NotOrdered(ne) NonLinear      
 Amplitude2     -1.0000E+03  0.0000E+00  1.0000E+03  3.0000E+02 Gaussian(e)     NotOrdered(ne) NonLinear      
 Constant       -1.0000E+06  0.0000E+00  1.0000E+06  3.0000E+05 Gaussian(e)     NotOrdered(ne) NonLinear      
+  6  Number of Derived parameters
+DecayRateLow
+DecayRateMiddle
+DecayRateHigh
+DecayTimeHigh
+DecayTimeMiddle
+DecayTimeLow
+
+### BI MONO
+
+  1  Number of Abscissa
+  3  Number of model vectors
+  1  Number of data cols
+  5  Number of Priors
+DecayRate1      0.0000E+00  1.0000E+00  1.0000E+01  1.0000E+00 Positive(e)     LowHigh(ne)    NonLinear      
+DecayRate2      0.0000E+00  1.0000E+00  1.0000E+01  1.0000E+00 Positive(e)     LowHigh(ne)    NonLinear      
+Amplitude1     -1.0000E+06  0.0000E+00  1.0000E+06  3.0000E+05 Gaussian(ne)    NotOrdered(ne) Amplitude      
+Amplitude2     -1.0000E+06  0.0000E+00  1.0000E+06  3.0000E+05 Gaussian(ne)    NotOrdered(ne) Amplitude      
+Constant       -1.0000E+06  0.0000E+00  1.0000E+06  3.0000E+05 Gaussian(ne)    NotOrdered(ne) Amplitude      
   6  Number of Derived parameters
 DecayRateLow
 DecayRateMiddle

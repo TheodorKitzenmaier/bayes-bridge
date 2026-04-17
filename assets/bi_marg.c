@@ -39,7 +39,7 @@ int main (int argc, char** argv) {
   stat(in, &st);
   int count = st.st_size / 8;
   double* abscissa = (double*)malloc(count * sizeof(double));
-  double* signal = (double*)malloc(count * sizeof(double) * 2);
+  double* signal = (double*)malloc(count * sizeof(double) * 3);
   fread(abscissa, sizeof(double), count, in_file);
   fclose(in_file);
   struct priors priors;
@@ -57,22 +57,29 @@ int main (int argc, char** argv) {
   fwrite(drv_val, sizeof(double), 6, drv_file);
   fclose(drv_file);
 
-  int error = 1;
+  int error_1 = 1;
+  int error_2 = 1;
   for (int i = 0; i < count; i++) {
-    signal[i] = 
-      priors.constant
-      + priors.amplitude_1 * exp(-priors.decay_rate_1 * abscissa[i])
-      + priors.amplitude_2 * exp(-priors.decay_rate_2 * abscissa[i]);
+    signal[i] = exp(-priors.decay_rate_1 * abscissa[i]);
     if (signal[i] != 0.0) {
-      error = 0;
+      error_1 = 0;
     }
-    signal[i + count] = 1.0;
+    
+    signal[i + count] = exp(-priors.decay_rate_2 * abscissa[i]);
+    if (signal[i + count] != 0.0) {
+      error_2 = 0;
+    }
+
+    signal[i + 2 * count] = 1.0;
   }
-  if (error) {
+  if (error_1) {
     signal[0] = 1.0;
   }
+  if (error_2) {
+    signal[0 + count] = 1.0;
+  }
   FILE* out_file = fopen(out, "w");
-  fwrite(signal, sizeof(double), count * 2, out_file);
+  fwrite(signal, sizeof(double), count * 3, out_file);
   fclose(out_file);
 
   free(abscissa);

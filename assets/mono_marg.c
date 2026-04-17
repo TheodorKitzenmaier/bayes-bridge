@@ -57,9 +57,7 @@ int main (int argc, char** argv) {
 
   int error = 1;
   for (int i = 0; i < count; i++) {
-    signal[i] = 
-      priors.constant
-      + priors.amplitude * exp(-priors.decay_rate * abscissa[i]);
+    signal[i] = exp(-priors.decay_rate * abscissa[i]);
     if (signal[i] != 0.0) {
       error = 0;
     }
