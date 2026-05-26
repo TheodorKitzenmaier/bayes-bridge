@@ -1,0 +1,13 @@
+  1  Number of Abscissa
+  1  Number of model vectors
+  1  Number of data cols
+  2  Number of Priors
+DecayRate1      0.0000E+00  1.0000E+00  1.0000E+01  1.0000E+00 Positive(e)     LowHigh(ne)    NonLinear      
+Amplitude      -1.0000E+06  0.0000E+00  1.0000E+06  3.0000E+05 Gaussian(ne)    NotOrdered(ne) Amplitude      
+  6  Number of Derived parameters
+DecayRateLow
+DecayRateMiddle
+DecayRateHigh
+DecayTimeHigh
+DecayTimeMiddle
+DecayTimeLow
